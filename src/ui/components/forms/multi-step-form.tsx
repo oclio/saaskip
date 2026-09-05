@@ -71,7 +71,6 @@ export function MultiStepForm({
       {progressBar && (
         <div
           className="mt-4 flex gap-2"
-          role="progressbar"
           aria-valuenow={currentIndex + 1}
           aria-valuemax={steps.length}
         >
