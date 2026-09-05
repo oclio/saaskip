@@ -121,7 +121,7 @@ const eslintConfig = defineConfig([
       'ignore.mjs',
       'knip.config.mjs',
       'messages/**',
-      'src/config/**',
+      'src/config/icons.tsx',
       'test-exclude.mjs',
     ],
     plugins: { perfectionist },

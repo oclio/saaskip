@@ -6,8 +6,14 @@ import { cn } from '@/ui/helpers';
 export function renderLink(
   props: ComponentProps<typeof Link> &
     Partial<Record<`data-${string}`, string | boolean | undefined>>,
+  suffix?: ReactNode,
 ) {
-  return (chunks: ReactNode) => <Link {...props}>{chunks}</Link>;
+  return (chunks: ReactNode) => (
+    <Link {...props}>
+      {chunks}
+      {suffix}
+    </Link>
+  );
 }
 
 export function renderStrong(className?: string) {

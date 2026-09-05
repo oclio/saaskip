@@ -1,8 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 
+import PageLayout from '@/app/[locale]/(main)/_components/page-layout';
 import { createPageMetadata } from '@/core/seo';
-
-import PageLayout from '../../_components/page-layout';
 
 export async function generateMetadata({
   params,

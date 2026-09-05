@@ -23,20 +23,20 @@ Footer column headings — each groups navigation items by category.
 */
 export const navigationCategories: NavigationCategory[] = [
   {
-    key: 'company',
-    title: 'components.footer.categories.company',
+    key: 'product',
+    title: 'components.footer.categories.product',
   },
   {
     key: 'help',
     title: 'components.footer.categories.help',
   },
   {
-    key: 'legal',
-    title: 'components.footer.categories.legal',
+    key: 'company',
+    title: 'components.footer.categories.company',
   },
   {
-    key: 'product',
-    title: 'components.footer.categories.product',
+    key: 'legal',
+    title: 'components.footer.categories.legal',
   },
 ];
 
@@ -47,28 +47,34 @@ export const navigationCategories: NavigationCategory[] = [
  */
 export const navigation: NavigationItem[] = [
   {
-    category: 'company',
-    href: '#',
-    label: 'pages.about.title',
-    location: ['footer'],
+    category: 'product',
+    href: '/#features-section',
+    label: 'pages.landing.features.title',
+    location: ['footer', 'mobileMenu', 'navbar'],
   },
   {
-    category: 'company',
-    href: '#',
-    label: 'pages.careers.title',
-    location: ['footer'],
+    category: 'product',
+    href: '/#pricing-section',
+    label: 'pages.landing.pricing.title',
+    location: ['footer', 'mobileMenu', 'navbar'],
   },
   {
-    category: 'company',
-    href: '#',
-    label: 'pages.partners.title',
-    location: ['footer'],
+    category: 'help',
+    href: '/#faq-section',
+    label: 'pages.faq.shortTitle',
+    location: ['footer', 'mobileMenu', 'navbar'],
   },
   {
-    category: 'company',
-    href: '#',
-    label: 'pages.press.title',
-    location: ['footer'],
+    category: 'product',
+    href: '/#what-is-included-section',
+    label: 'pages.whatIsIncluded.title',
+    location: ['footer', 'mobileMenu', 'navbar'],
+  },
+  {
+    category: 'product',
+    href: '/#cta-section',
+    label: 'pages.landing.cta.title',
+    location: ['mobileMenu', 'navbar'],
   },
   {
     category: 'help',
@@ -84,19 +90,37 @@ export const navigation: NavigationItem[] = [
   },
   {
     category: 'help',
-    href: '/#faq-section',
-    label: 'pages.faq.shortTitle',
-    location: ['footer', 'mobileMenu', 'navbar'],
-  },
-  {
-    category: 'help',
     href: '/contact',
     label: 'pages.contact.title',
     location: ['footer', 'mobileMenu'],
   },
   {
+    category: 'company',
+    href: '#',
+    label: 'pages.about.title',
+    location: ['footer'],
+  },
+  {
+    category: 'company',
+    href: '#',
+    label: 'pages.blog.title',
+    location: ['footer'],
+  },
+  {
+    category: 'company',
+    href: '#',
+    label: 'pages.partners.title',
+    location: ['footer'],
+  },
+  {
+    category: 'company',
+    href: '#',
+    label: 'pages.press.title',
+    location: ['footer'],
+  },
+  {
     category: 'legal',
-    href: '/cookie-policy',
+    href: '/cookies',
     label: 'pages.cookies.shortTitle',
     location: ['footer'],
   },
@@ -108,39 +132,15 @@ export const navigation: NavigationItem[] = [
   },
   {
     category: 'legal',
-    href: '/privacy-policy',
+    href: '/privacy',
     label: 'pages.privacy.shortTitle',
     location: ['footer'],
   },
   {
     category: 'legal',
-    href: '/terms-of-service',
+    href: '/terms',
     label: 'pages.terms.shortTitle',
     location: ['footer'],
-  },
-  {
-    category: 'product',
-    href: '/#cta-section',
-    label: 'pages.landing.cta.title',
-    location: ['mobileMenu', 'navbar'],
-  },
-  {
-    category: 'product',
-    href: '/#features-section',
-    label: 'pages.landing.features.title',
-    location: ['footer', 'mobileMenu', 'navbar'],
-  },
-  {
-    category: 'product',
-    href: '/#pricing-section',
-    label: 'pages.landing.pricing.title',
-    location: ['footer', 'mobileMenu', 'navbar'],
-  },
-  {
-    category: 'product',
-    href: '/#what-is-included-section',
-    label: 'pages.whatIsIncluded.title',
-    location: ['footer', 'mobileMenu', 'navbar'],
   },
 ];
 

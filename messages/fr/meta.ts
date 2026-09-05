@@ -3,7 +3,7 @@ import type { TranslationSchema } from '../types';
 
 export default {
   description:
-    'Un socle SaaS Next.js résilient conçu pour des projets sérieux. Basé sur un outillage strict et des suites de tests exhaustives, renforcé par le mutation testing — sans aucun compromis sur la qualité.',
+    'Un socle SaaS Next.js qui ne cassera pas quand vous le customiserez. Zéro bug, entièrement testé et documenté, personnalisable dès le premier jour. Conçu pour des produits business-critiques, solides comme un roc.',
   keywords: [
     'boilerplate',
     'nextjs',

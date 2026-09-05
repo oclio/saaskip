@@ -1,4 +1,11 @@
-import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index as pgIndex,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 import { Role } from '../types';
 
@@ -45,6 +52,7 @@ export const accountsTable = pgTable('auth_account', {
   accessToken: text('access_token'),
   refreshToken: text('refresh_token'),
   idToken: text('id_token'),
+  issuer: text('issuer'),
   accessTokenExpiresAt: timestamp('access_token_expires_at'),
   refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
   scope: text('scope'),
@@ -69,6 +77,31 @@ export const verificationsTable = pgTable('auth_verification', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+// ─── Audit Logs ───
+export const auditLogTable = pgTable(
+  'auth_audit_log',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+
+    userId: uuid('user_id').references(() => usersTable.id, {
+      onDelete: 'set null',
+    }),
+    action: text('action').notNull(),
+    status: text('status').notNull(),
+    severity: text('severity').notNull(),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    metadata: text('metadata'),
+
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    pgIndex('audit_log_user_id_idx').on(table.userId),
+    pgIndex('audit_log_action_idx').on(table.action),
+    pgIndex('audit_log_created_at_idx').on(table.createdAt),
+  ],
+);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export type User = typeof usersTable.$inferSelect;

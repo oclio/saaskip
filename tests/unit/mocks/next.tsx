@@ -4,6 +4,7 @@ vi.mock('next/navigation', () => ({
   notFound: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
   }),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
 }));
 
 vi.mock('next/headers', () => ({
@@ -35,5 +36,21 @@ vi.mock('next/image', () => ({
 vi.mock('next/error', () => ({
   default: ({ statusCode }: { statusCode: number }) => (
     <div data-testid="next-error" data-status-code={statusCode} />
+  ),
+}));
+
+vi.mock('next/link', () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }));

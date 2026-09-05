@@ -20,7 +20,7 @@ export default defineConfig({
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }]],
 
   sitemap: {
-    hostname: 'https://saaskip-docs.oclio.dev',
+    hostname: 'https://docs.saaskip.dev',
   },
 
   themeConfig: {
@@ -49,7 +49,9 @@ export default defineConfig({
           items: [
             { text: 'Architecture', link: '/core/architecture' },
             { text: 'Environment Variables', link: '/core/env' },
+            { text: 'Authentication', link: '/core/auth' },
             { text: 'Database', link: '/core/database' },
+            { text: 'Forms', link: '/core/forms' },
             { text: 'Security', link: '/core/security' },
             { text: 'Observability', link: '/core/observability' },
             { text: 'Mailer', link: '/core/mailer' },

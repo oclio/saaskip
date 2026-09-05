@@ -1,0 +1,22 @@
+@layer utilities {
+  /* ─── FORMS ────────────────────────────────────────────────────────────── */
+  /* ─── FIELD LABELS ─── */
+  [data-slot='field-label'].required:after {
+    content: '*';
+    @apply text-destructive -ml-1.5;
+  }
+
+  [data-slot='field-label'].required.disabled:after {
+    content: '*';
+    @apply text-muted-foreground -ml-1.5;
+  }
+
+  [data-slot='field-label'].disabled {
+    @apply text-muted-foreground;
+  }
+
+  /* ─── FIELD ERRORS ─── */
+  [data-slot='field-error'] {
+    @apply text-xs;
+  }
+}

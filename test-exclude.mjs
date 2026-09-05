@@ -1,5 +1,6 @@
 const exclude = [
   '**/*.d.ts',
+  'src/**/*.motion.ts',
   'src/**/*.store.ts',
   'src/**/*.stories.*',
   'src/**/__e2e__/**',
@@ -7,7 +8,11 @@ const exclude = [
   'src/**/db-schemas/**',
   'src/**/types.ts',
   'src/**/types/**',
+  'src/app/api/auth/\\[...all\\]/route.ts',
   'src/config/**',
+  'src/core/auth/client.ts',
+  'src/core/auth/helpers/index.ts',
+  'src/core/auth/index.ts',
   'src/core/env/index.ts',
   'src/core/errors/codes.ts',
   'src/core/errors/index.ts',

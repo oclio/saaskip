@@ -9,4 +9,5 @@ export default {
   login: 'Se connecter',
   logout: 'Se déconnecter',
   menu: 'Menu',
+  opensInNewTab: "(s'ouvre dans un nouvel onglet)",
 } as const satisfies TranslationSchema<typeof enLabels>;

@@ -21,9 +21,18 @@ describe('createViewport', () => {
     }[];
 
     expect(themeColors).toHaveLength(2);
-    for (const entry of themeColors) {
-      expect(entry.media).toBeTruthy();
-      expect(entry.color).toBeTruthy();
-    }
+  });
+
+  it.each([
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+  ])('provides themeColor entry for $media', (entry) => {
+    const viewport = createViewport();
+    const themeColors = viewport.themeColor as {
+      media: string;
+      color: string;
+    }[];
+
+    expect(themeColors).toContainEqual(entry);
   });
 });

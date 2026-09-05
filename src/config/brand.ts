@@ -4,11 +4,11 @@
  * and footer.
  */
 export const brand = {
-  author: {
-    email: 'hello@oclio.dev', // JSON-LD organization email
-    name: 'oclio', // metadata authors and creator
-    twitter: '@oclio', // twitter:card creator handle
-    url: 'https://oclio.dev', // JSON-LD sameAs, email footer link
-  },
   title: 'saaskip', // page title, OG/Twitter, manifest, footer copyright
+  author: {
+    email: 'hello@saaskip.dev', // JSON-LD organization email
+    name: 'saaskip', // metadata authors and creator
+    twitter: '@saaskip', // twitter:card creator handle
+    url: 'https://saaskip.dev', // JSON-LD sameAs, email footer link
+  },
 };

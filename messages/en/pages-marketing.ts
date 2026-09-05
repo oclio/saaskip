@@ -2,8 +2,8 @@ export default {
   about: {
     title: 'About',
   },
-  careers: {
-    title: 'Careers',
+  blog: {
+    title: 'Blog',
   },
   partners: {
     title: 'Partners',

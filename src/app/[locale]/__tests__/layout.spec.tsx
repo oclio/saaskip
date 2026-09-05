@@ -1,6 +1,22 @@
 import { render, screen } from '@testing-library/react';
+import { notFound } from 'next/navigation';
+import { getMessages } from 'next-intl/server';
 
 import { routing } from '@/core/i18n/routing';
+import {
+  createLayoutMetadata,
+  createViewport,
+  JsonLdScript,
+  organizationJsonLd,
+  websiteJsonLd,
+} from '@/core/seo';
+import { fontHeading, fontSans } from '@/ui/fonts';
+
+import RootLayout, {
+  generateMetadata,
+  generateStaticParams,
+  viewport,
+} from '../layout';
 
 vi.mock('@/core/seo', () => ({
   createLayoutMetadata: vi.fn(async ({ locale }: { locale: string }) => ({
@@ -27,12 +43,6 @@ vi.mock('@/core/seo', () => ({
 const localeParameters = (locale: string) => ({
   params: Promise.resolve({ locale }),
 });
-
-import RootLayout, {
-  generateMetadata,
-  generateStaticParams,
-  viewport,
-} from '../layout';
 
 describe('RootLayout', () => {
   beforeEach(() => {
@@ -67,8 +77,6 @@ describe('RootLayout', () => {
   });
 
   it('applies font variables to html element', async () => {
-    const { fontSans, fontHeading } = await import('@/ui/fonts');
-
     render(
       await RootLayout({
         children: <div>Content</div>,
@@ -82,8 +90,6 @@ describe('RootLayout', () => {
   });
 
   it('fetches messages for the given locale', async () => {
-    const { getMessages } = await import('next-intl/server');
-
     render(
       await RootLayout({
         children: <div>Content</div>,
@@ -95,8 +101,6 @@ describe('RootLayout', () => {
   });
 
   it('throws notFound for an invalid locale', async () => {
-    const { notFound } = await import('next/navigation');
-
     await expect(
       RootLayout({
         children: <div>Content</div>,
@@ -108,9 +112,6 @@ describe('RootLayout', () => {
   });
 
   it('renders both JsonLd scripts with website and organization data', async () => {
-    const { websiteJsonLd, organizationJsonLd, JsonLdScript } =
-      await import('@/core/seo');
-
     render(
       await RootLayout({
         children: <div>Content</div>,
@@ -142,8 +143,6 @@ describe('generateStaticParams', () => {
 
 describe('generateMetadata', () => {
   it('delegates to createLayoutMetadata with the locale', async () => {
-    const { createLayoutMetadata } = await import('@/core/seo');
-
     const result = await generateMetadata({
       params: Promise.resolve({ locale: 'fr' }),
     });
@@ -157,9 +156,7 @@ describe('generateMetadata', () => {
 });
 
 describe('viewport', () => {
-  it('is built from createViewport', async () => {
-    const { createViewport } = await import('@/core/seo');
-
+  it('is built from createViewport', () => {
     expect(viewport).toEqual(createViewport());
   });
 });

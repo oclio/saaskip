@@ -14,10 +14,6 @@ const emailWhitelist = env.EMAIL_WHITELIST
     ]
   : [];
 
-/**
- * Checks if a given email is authorized based on the ALLOWED_EMAILS whitelist environment variable.
- * If the whitelist is empty or not configured, all emails are considered authorized.
- */
 export function isAuthorizedEmail(email: string): boolean {
   if (emailWhitelist.length === 0) {
     return true;

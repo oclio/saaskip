@@ -6,4 +6,5 @@ export default {
   login: 'Log in',
   logout: 'Log out',
   menu: 'Menu',
+  opensInNewTab: '(opens in new tab)',
 } as const;

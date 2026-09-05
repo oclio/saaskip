@@ -8,6 +8,20 @@
       "when": 1788184668995,
       "tag": "0000_silly_rhodey",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788524010818,
+      "tag": "0001_melodic_arachne",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788564608744,
+      "tag": "0002_demonic_morlocks",
+      "breakpoints": true
     }
   ]
 }

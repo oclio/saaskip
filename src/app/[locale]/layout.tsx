@@ -17,6 +17,7 @@ import {
   websiteJsonLd,
 } from '@/core/seo';
 import ScreenSize from '@/ui/components/dev/screen-size';
+import { Toaster } from '@/ui/components/shadcn/sonner';
 import { ThemeProvider } from '@/ui/components/theme-provider';
 import { fontHeading, fontSans } from '@/ui/fonts';
 import { cn } from '@/ui/helpers';
@@ -66,6 +67,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <NextIntlClientProvider messages={messages} locale={locale}>
             {children}
+            <Toaster closeButton />
           </NextIntlClientProvider>
         </ThemeProvider>
         <WebVitals />

@@ -14,6 +14,14 @@ export const env = createEnv({
     DATABASE_IDLE_TIMEOUT: z.coerce.number().int().min(0).default(30),
     DATABASE_CONNECT_TIMEOUT: z.coerce.number().int().min(0).default(10),
 
+    // ─── AUTH ────────────────────────────────────────────────────────────────
+    BETTER_AUTH_SECRET: z.string().min(32),
+    BETTER_AUTH_URL: z.url({ protocol: /^https?/ }),
+    GITHUB_CLIENT_ID: z.string().min(10),
+    GITHUB_CLIENT_SECRET: z.string().min(10),
+    GOOGLE_CLIENT_ID: z.string().min(10),
+    GOOGLE_CLIENT_SECRET: z.string().min(10),
+
     // ─── SECURITY ────────────────────────────────────────────────────────────
     ARCJET_KEY: z.string().min(10).optional(),
     ARCJET_ENV: z

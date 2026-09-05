@@ -19,7 +19,7 @@ interface Properties {
 }
 
 export default function NewsletterConfirmation({
-  url = 'https://saaskip.oclio.dev/confirm?token=xyz',
+  url = 'https://saaskip.dev/newsletter/confirm?token=xyz',
   locale = 'en',
   labels = {
     preview: 'Confirm your subscription',

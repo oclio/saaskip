@@ -1,3 +1,4 @@
+import { withAuth } from '@/core/auth/middlewares/with-auth';
 import { withIntl } from '@/core/i18n/middlewares/with-intl';
 import type { CustomMiddleware } from '@/core/middlewares/types';
 import { withAxiom } from '@/core/observability/axiom/middlewares/with-axiom';
@@ -15,6 +16,7 @@ const stack: CustomMiddleware[] = [
   withCsrf,
   withBodySizeLimit,
   withArcjet,
+  withAuth,
 ];
 
 export default stack;

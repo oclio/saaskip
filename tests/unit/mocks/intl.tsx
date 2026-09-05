@@ -16,6 +16,14 @@ const messagesMock: Record<string, unknown> = {
 
 type TranslationMock = ReturnType<typeof vi.fn<(key: string) => string>> & {
   raw: ReturnType<typeof vi.fn<(key: string) => unknown>>;
+  rich: ReturnType<
+    typeof vi.fn<
+      (
+        key: string,
+        renderers: Record<string, (chunks: React.ReactNode) => React.ReactNode>,
+      ) => React.ReactNode
+    >
+  >;
 };
 
 const translationMock = vi.fn((key: string) => {
@@ -33,6 +41,19 @@ translationMock.raw = vi.fn((key: string) => {
   }
   return key;
 });
+
+// Allow t.rich() to render chunks with provided renderers
+translationMock.rich = vi.fn(
+  (
+    _key: string,
+    renderers: Record<string, (chunks: React.ReactNode) => React.ReactNode>,
+  ) => {
+    const keys = Object.keys(renderers);
+    return keys.map((key) => (
+      <span key={key}>{renderers[key](`chunk-${key}`)}</span>
+    ));
+  },
+);
 
 vi.mock('next-intl', () => ({
   hasLocale: (locales: readonly string[], locale: string) =>

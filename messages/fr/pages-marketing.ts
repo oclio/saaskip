@@ -5,8 +5,8 @@ export default {
   about: {
     title: 'À propos',
   },
-  careers: {
-    title: 'Carrières',
+  blog: {
+    title: 'Blog',
   },
   partners: {
     title: 'Partenaires',
