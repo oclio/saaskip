@@ -11,7 +11,7 @@ src/
   config/brand.ts    → brand metadata (title, author)
   core/
     async/           → withTimeout helper, TimeoutError
-    auth/            → Better Auth schemas and role types
+    auth/            → Better Auth server, client, hooks, helpers, middleware, schemas, actions
     env/             → typed environment variable validation
     db/              → Drizzle ORM client, health check
     errors/          → AppError class, error codes, message helpers
@@ -30,6 +30,10 @@ src/
 | ------------------------- | -------------------------------------------------------- |
 | `helpers/with-timeout.ts` | Runs a promise with a maximum timeout delay              |
 | `errors/timeout-error.ts` | Error thrown when an operation exceeds its timeout (504) |
+
+## auth
+
+Authentication via [Better Auth](https://www.better-auth.com) with email OTP, Google and GitHub social providers, email whitelist enforcement, audit logging, and route protection middleware. See [Authentication](./auth) for the full guide.
 
 ## env
 
@@ -132,6 +136,7 @@ The chain runs middlewares in order, unwinds in reverse, and wraps any non-`AppE
 | 5     | `withCsrf`          | CSRF protection for state-changing requests                  |
 | 6     | `withBodySizeLimit` | Rejects requests exceeding the configured body size          |
 | 7     | `withArcjet`        | Rate limiting and bot detection via Arcjet                   |
+| 8     | `withAuth`          | Route protection — redirects for `/dashboard` and `/login`   |
 
 `withSecureCookies` is intentionally first (outermost) so it sees the final response after all other middlewares have set their `Set-Cookie` headers. See [Security](./security#why-withsecurecookies-is-outermost) for details.
 
@@ -141,6 +146,7 @@ The chain runs middlewares in order, unwinds in reverse, and wraps any non-`AppE
 | ------------ | ---------- | -------------------- | ---------------------------------- |
 | `x-pathname` | `proxy.ts` | `createPageMetadata` | Full pathname (with locale prefix) |
 | `x-locale`   | `withIntl` | `createPageMetadata` | Resolved locale (`en`, `fr`, etc.) |
+| `x-user`     | `withAuth` | Downstream handlers  | Session user JSON (when logged in) |
 
 ## observability
 
