@@ -91,6 +91,7 @@ export default function StepLogin({ goTo }: Readonly<StepComponentProps>) {
 
                   <Input
                     {...field}
+                    data-testid="email-input"
                     disabled={isPending || isSubmitted}
                     aria-invalid={fieldState.invalid}
                     placeholder={`${t('forms.placeholders.email')}...`}
@@ -103,6 +104,7 @@ export default function StepLogin({ goTo }: Readonly<StepComponentProps>) {
 
                 <PendingButton
                   type="submit"
+                  data-testid="submit-email-button"
                   pending={isPending && !selectedProvider}
                   disabled={!form.formState.isValid || isSubmitted}
                   pendingLabel={t('pages.login.emailForm.receiveACode')}

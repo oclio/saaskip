@@ -11,7 +11,7 @@ export default function SignOutButton() {
   const { signOut } = useSignOut();
 
   return (
-    <Button variant="outline" onClick={signOut}>
+    <Button data-testid="logout-button" variant="outline" onClick={signOut}>
       {icon('logout', { 'aria-hidden': true })}
       {t('labels.logout')}
     </Button>

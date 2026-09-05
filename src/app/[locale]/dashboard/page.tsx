@@ -7,7 +7,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1>{t('title')}</h1>
+      <h1 data-testid="dashboard-title">{t('title')}</h1>
       <SignOutButton />
     </div>
   );

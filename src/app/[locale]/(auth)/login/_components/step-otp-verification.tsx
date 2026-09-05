@@ -43,9 +43,11 @@ export default function StepOtpVerification({
           disabled={isPending || isSubmitted}
           onComplete={() => otpForm.handleSubmit(handleSubmit)()}
           pattern={REGEXP_ONLY_DIGITS}
+          data-testid="otp-input"
         />
 
         <PendingButton
+          data-testid="verify-button"
           pending={isPending}
           disabled={!otpForm.formState.isValid || isSubmitted || isPending}
           pendingLabel={t('pages.login.verifyCode')}
@@ -55,6 +57,7 @@ export default function StepOtpVerification({
 
         <div className="flex flex-col items-center gap-2">
           <CountdownButton
+            data-testid="resend-button"
             variant="outline"
             seconds={60}
             onAction={handleResendOtp}
@@ -64,6 +67,7 @@ export default function StepOtpVerification({
           />
 
           <Button
+            data-testid="back-to-email"
             variant="link"
             size="sm"
             disabled={isPending || isSubmitted}
