@@ -18,19 +18,21 @@
 
 A Next.js SaaS foundation that won't break when you customize it. Zero-bug, fully tested and documented, safe to modify from day one. Built for business-critical, rock-solid products.
 
-🚀 **[Live demo](https://saaskip.oclio.dev)** — explore the application in action.
+🚀 **[Live demo](https://saaskip.dev)** — explore the application in action.
 
-📖 **[Full documentation](https://docs.saaskip.oclio.dev)** — architectures, features, and guides.
+📖 **[Full documentation](https://docs.saaskip.dev)** — architectures, features, and guides.
 
 ## Features
 
-- **Security** — [Arcjet](https://arcjet.com) rate limiting & bot detection, CSP with nonce, CSRF protection, body size limit, secure cookies
-- **Database** — PostgreSQL with [pgvector](https://github.com/pgvector/pgvector), [Drizzle ORM](https://orm.drizzle.team) with typed schemas and migrations, connection pooling, health-checked
-- **Observability** — [Axiom](https://axiom.co) logging + [Sentry](https://sentry.io) error tracking, composable middleware chain, automatic web vitals reporting
-- **Email** — [Resend](https://resend.com) + [React Email](https://react.email) templates, provider-agnostic mailer interface
-- **i18n** — [next-intl](https://next-intl.dev) with locale-segmented routing, typed message bundles, persistent locale switcher
-- **SEO** — per-locale metadata, `sitemap.xml`, `robots.txt`, web manifest, JSON-LD (`WebSite` + `Organization`)
-- **Dark mode** — [`next-themes`](https://github.com/pacocoursey/next-themes), OKLCH color space, persists across reloads
+| Feature       | Description                                                                                                 |
+| ------------- | ----------------------------------------------------------------------------------------------------------- |
+| Auth          | [Better Auth](https://www.better-auth.com) with Google, GitHub & email OTP                                  |
+| Database      | PostgreSQL + [pgvector](https://github.com/pgvector/pgvector), [Drizzle ORM](https://orm.drizzle.team)      |
+| i18n          | [next-intl](https://next-intl.dev) locale routing, typed message bundles                                    |
+| Security      | [Arcjet](https://arcjet.com) rate limiting, CSP nonce, CSRF, secure cookies via composable middleware chain |
+| Observability | [Axiom](https://axiom.co) logging + [Sentry](https://sentry.io) tracking                                    |
+| SEO           | Per-locale metadata, sitemap, robots, JSON-LD (`WebSite` + `Organization`)                                  |
+| Email         | [Resend](https://resend.com) + [React Email](https://react.email) templates                                 |
 
 ## Stack
 
@@ -40,7 +42,12 @@ A Next.js SaaS foundation that won't break when you customize it. Zero-bug, full
 | [React](https://react.dev) 19                  | UI library                            |
 | [TypeScript](https://www.typescriptlang.org) 6 | Type safety                           |
 | [Tailwind CSS](https://tailwindcss.com) 4      | Styling                               |
-| [shadcn/ui](https://ui.shadcn.com)             | Component system (base-lyra style)    |
+| [shadcn/ui](https://ui.shadcn.com)             | Component system, dark mode (OKLCH)   |
+| [Better Auth](https://www.better-auth.com)     | Authentication                        |
+| [React Hook Form](https://react-hook-form.com) | Forms & validation                    |
+| [Zod](https://zod.dev)                         | Schema validation                     |
+| [Zustand](https://github.com/pmndrs/zustand)   | Client state                          |
+| [Motion](https://motion.dev)                   | Animations                            |
 
 ## Requirements
 
