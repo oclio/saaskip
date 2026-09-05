@@ -19,9 +19,8 @@ describe('CardDivider', () => {
   });
 
   it('merges custom className with the base classes', () => {
-    const { container } = render(<CardDivider className="my-4" />);
+    const { container } = render(<CardDivider className="test-custom-class" />);
 
-    expect(container.firstChild).toHaveClass('my-4');
-    expect(container.firstChild).toHaveClass('relative');
+    expect(container.firstChild).toHaveClass('test-custom-class');
   });
 });

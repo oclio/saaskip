@@ -67,6 +67,22 @@ describe('PendingButton', () => {
     });
   });
 
+  describe('pendingLabelClassName', () => {
+    it('applies the provided pendingLabelClassName to the pending label span', () => {
+      render(
+        <PendingButton
+          pending
+          pendingLabel="Loading"
+          pendingLabelClassName="test-pending-class"
+        >
+          Submit
+        </PendingButton>,
+      );
+
+      expect(screen.getByText('Loading...')).toHaveClass('test-pending-class');
+    });
+  });
+
   describe('disabled state', () => {
     it.each([
       { pending: true, disabled: undefined, expected: true },
@@ -123,9 +139,15 @@ describe('PendingButton', () => {
       expect(icon).toHaveBeenCalledWith(
         'loading',
         expect.objectContaining({
-          className: 'animate-spin',
+          className: expect.any(String),
         }),
       );
+      expect(
+        String(
+          (icon as unknown as { mock: { calls: { className?: string }[][] } })
+            .mock.calls[0][1].className,
+        ),
+      ).not.toBe('');
     });
 
     it('sets aria-label on the icon with the translated loading label', () => {

@@ -274,15 +274,15 @@ describe('OtpField', () => {
 
   describe('label className', () => {
     it('applies the provided labelClassName to the label', () => {
-      renderOtpField({ labelClassName: 'required' });
+      renderOtpField({ labelClassName: 'test-label-class' });
 
-      expect(screen.getByText('Enter code').className).toContain('required');
+      expect(screen.getByText('Enter code')).toHaveClass('test-label-class');
     });
 
     it('includes the disabled class when disabled is true', () => {
-      renderOtpField({ labelClassName: 'required', disabled: true });
+      renderOtpField({ labelClassName: 'test-label-class', disabled: true });
 
-      expect(screen.getByText('Enter code').className).toContain('disabled');
+      expect(screen.getByText('Enter code')).toHaveClass('disabled');
     });
   });
 });

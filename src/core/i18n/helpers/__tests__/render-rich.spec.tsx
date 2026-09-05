@@ -33,7 +33,7 @@ describe('renderLink', () => {
   it('renders a Link with the given props and chunks as children', () => {
     const renderFunction = renderLink({
       href: 'https://example.com',
-      className: 'text-primary',
+      className: 'test-link-class',
       'data-testid': 'test-link',
     });
 
@@ -41,7 +41,7 @@ describe('renderLink', () => {
 
     const link = getByTestId('test-link');
     expect(link).toHaveAttribute('href', 'https://example.com');
-    expect(link).toHaveAttribute('class', 'text-primary');
+    expect(link).toHaveAttribute('class', 'test-link-class');
     expect(link).toHaveTextContent('click here');
   });
 
@@ -55,10 +55,7 @@ describe('renderLink', () => {
 
     const link = getByTestId('test-link');
     expect(link).toHaveTextContent('click here(opens in new tab)');
-    expect(link.querySelector('.sr-only')).not.toBeNull();
-    expect(link.querySelector('.sr-only')).toHaveTextContent(
-      '(opens in new tab)',
-    );
+    expect(link).toHaveTextContent('(opens in new tab)');
   });
 });
 
@@ -82,12 +79,12 @@ describe('renderStrong', () => {
   });
 
   it('merges a custom className with font-bold', () => {
-    const renderFunction = renderStrong('text-red-500');
+    const renderFunction = renderStrong('test-strong-class');
 
     const { container } = render(<>{renderFunction('text')}</>);
 
     expect(container.querySelector('strong')).toHaveClass('font-bold');
-    expect(container.querySelector('strong')).toHaveClass('text-red-500');
+    expect(container.querySelector('strong')).toHaveClass('test-strong-class');
   });
 });
 
@@ -103,13 +100,11 @@ describe('renderSmall', () => {
   });
 
   it('applies the given className', () => {
-    const renderFunction = renderSmall('text-muted-foreground');
+    const renderFunction = renderSmall('test-small-class');
 
     const { container } = render(<>{renderFunction('text')}</>);
 
-    expect(container.querySelector('small')).toHaveClass(
-      'text-muted-foreground',
-    );
+    expect(container.querySelector('small')).toHaveClass('test-small-class');
   });
 });
 

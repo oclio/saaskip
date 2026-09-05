@@ -16,7 +16,7 @@ const motionSpanProps = vi.fn();
 const animatePresenceProps = vi.fn();
 
 const { mockDirection, mockPreviousIndex } = vi.hoisted(() => ({
-  mockDirection: { current: 1 as number },
+  mockDirection: { current: null as number | null },
   mockPreviousIndex: { current: null as unknown },
 }));
 
@@ -25,7 +25,9 @@ vi.mock('react', async () => {
   return {
     ...actual,
     useState: (initial: unknown) => {
-      if (initial === 1) return actual.useState(mockDirection.current);
+      if (initial === 1 && mockDirection.current !== null) {
+        return actual.useState(mockDirection.current);
+      }
       if (mockPreviousIndex.current !== null) {
         return actual.useState(mockPreviousIndex.current);
       }
@@ -79,7 +81,7 @@ const STEPS = [
 describe('MultiStepForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockDirection.current = 1;
+    mockDirection.current = null;
     mockPreviousIndex.current = null;
   });
 
@@ -259,7 +261,7 @@ describe('MultiStepForm', () => {
       );
 
       const stepCalls = motionDivProps.mock.calls.filter(
-        (call) => 'initial' in call[0],
+        (call) => call[0].className === 'w-full',
       );
       const lastStepCall = stepCalls.at(-1);
 
@@ -296,7 +298,7 @@ describe('MultiStepForm', () => {
       );
 
       const stepCalls = motionDivProps.mock.calls.filter(
-        (call) => 'initial' in call[0],
+        (call) => call[0].className === 'w-full',
       );
       const lastStepCall = stepCalls.at(-1);
 
@@ -308,7 +310,7 @@ describe('MultiStepForm', () => {
       );
     });
 
-    it('sets backward direction when currentIndex equals coerced previousIndex object', () => {
+    it('sets backward direction when currentIndex equals coerced previousIndex', () => {
       mockPreviousIndex.current = { valueOf: () => 0 };
 
       render(
@@ -316,7 +318,7 @@ describe('MultiStepForm', () => {
       );
 
       const stepCalls = motionDivProps.mock.calls.filter(
-        (call) => 'initial' in call[0],
+        (call) => call[0].className === 'w-full',
       );
       const lastStepCall = stepCalls.at(-1);
 
@@ -364,7 +366,7 @@ describe('MultiStepForm', () => {
       );
 
       const barCall = motionDivProps.mock.calls.find(
-        (call) => !('initial' in call[0]),
+        (call) => call[0].className !== 'w-full',
       );
 
       expect(barCall?.[0]).toEqual(
@@ -381,7 +383,7 @@ describe('MultiStepForm', () => {
       );
 
       const barCalls = motionDivProps.mock.calls.filter(
-        (call) => !('initial' in call[0]),
+        (call) => call[0].className !== 'w-full',
       );
 
       expect(barCalls[1]?.[0]).toEqual(
