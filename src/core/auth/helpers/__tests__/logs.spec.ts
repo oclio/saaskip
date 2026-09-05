@@ -2,14 +2,22 @@ import { vi } from 'vitest';
 
 import { axiomLoggerMock } from '@/tests/unit/mocks/observability';
 
-const insertChainMock = {
-  values: vi.fn(() => insertChainMock),
-  execute: vi.fn(async () => insertChainMock),
-};
-
-const dbMock = {
-  insert: vi.fn(() => insertChainMock),
-};
+const { insertChainMock, dbMock } = vi.hoisted(() => {
+  const insertChainMock = {
+    values: vi.fn(function () {
+      return insertChainMock;
+    }),
+    execute: vi.fn(async function () {
+      return insertChainMock;
+    }),
+  };
+  const dbMock = {
+    insert: vi.fn(function () {
+      return insertChainMock;
+    }),
+  };
+  return { insertChainMock, dbMock };
+});
 
 vi.mock('@/core/db', () => ({ db: dbMock }));
 
@@ -25,17 +33,15 @@ vi.mock('better-auth-audit-logs', () => ({
   })),
 }));
 
-const { auditLogPlugin, logSessionCreated } =
-  (await import('../logs')) as unknown as {
-    auditLogPlugin: {
-      config: {
-        capture: Record<string, unknown>;
-        beforeLog: (entry: unknown) => Promise<unknown>;
-        afterLog: (entry: unknown) => Promise<void>;
-      };
-    };
-    logSessionCreated: typeof import('../logs').logSessionCreated;
+import { auditLogPlugin, logSessionCreated } from '../logs';
+
+const plugin = auditLogPlugin as unknown as {
+  config: {
+    capture: Record<string, unknown>;
+    beforeLog: (entry: unknown) => Promise<unknown>;
+    afterLog: (entry: unknown) => Promise<void>;
   };
+};
 
 describe('auditLogPlugin', () => {
   beforeEach(() => {
@@ -44,7 +50,7 @@ describe('auditLogPlugin', () => {
 
   it('is configured with capture and schema options', () => {
     expect(auditLogPlugin).toBeDefined();
-    expect(auditLogPlugin.config.capture).toMatchObject({
+    expect(plugin.config.capture).toMatchObject({
       ipAddress: true,
       userAgent: true,
       requestBody: false,
@@ -53,7 +59,7 @@ describe('auditLogPlugin', () => {
 
   describe('beforeLog', () => {
     it('returns null for sign-in success entries to suppress duplicate writes', async () => {
-      const result = await auditLogPlugin.config.beforeLog({
+      const result = await plugin.config.beforeLog({
         action: 'sign-in',
         status: 'success',
       });
@@ -70,7 +76,7 @@ describe('auditLogPlugin', () => {
       async ({ action, status }) => {
         const entry = { action, status, userId: 'u1' };
 
-        const result = await auditLogPlugin.config.beforeLog(entry);
+        const result = await plugin.config.beforeLog(entry);
 
         expect(result).toBe(entry);
       },
@@ -85,7 +91,7 @@ describe('auditLogPlugin', () => {
       { action: 'revoke-session', event: 'auth.session.revoked' },
       { action: 'revoke-sessions', event: 'auth.sessions.revoked.all' },
     ])('logs $event for action $action', async ({ action, event }) => {
-      await auditLogPlugin.config.afterLog({
+      await plugin.config.afterLog({
         action,
         userId: 'u1',
         status: 'success',
@@ -96,12 +102,18 @@ describe('auditLogPlugin', () => {
 
       expect(axiomLoggerMock.info).toHaveBeenCalledWith(
         expect.stringContaining('Auth event'),
-        expect.objectContaining({ event, action }),
+        expect.objectContaining({
+          event,
+          action,
+          userId: 'u1',
+          status: 'success',
+          severity: 'low',
+        }),
       );
     });
 
     it('does not log for unmapped actions', async () => {
-      await auditLogPlugin.config.afterLog({
+      await plugin.config.afterLog({
         action: 'unknown-action',
         userId: 'u1',
         status: 'success',

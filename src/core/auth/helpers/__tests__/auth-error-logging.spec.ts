@@ -34,6 +34,8 @@ describe('authErrorLogging.onError', () => {
       expect.objectContaining({
         event: 'auth.login.failed',
         email: 'a@b.com',
+        error: expect.any(String),
+        code: 'INVALID_PASSWORD',
         path: '/api/auth/sign-in/login',
       }),
     );
@@ -59,6 +61,8 @@ describe('authErrorLogging.onError', () => {
       expect.stringContaining('Auth API error'),
       expect.objectContaining({
         event: 'auth.error',
+        error: expect.any(String),
+        code: 'DB_ERROR',
         path: '/api/auth/change-email',
       }),
     );

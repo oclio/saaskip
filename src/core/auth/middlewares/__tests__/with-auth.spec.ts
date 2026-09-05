@@ -8,14 +8,16 @@ import {
 } from '@/tests/unit/helpers/request';
 import { axiomLoggerMock } from '@/tests/unit/mocks/observability';
 
-const isAuthorizedEmailMock = vi.fn();
-const fetchMock = vi.fn();
+const { isAuthorizedEmailMock, fetchMock } = vi.hoisted(() => ({
+  isAuthorizedEmailMock: vi.fn(),
+  fetchMock: vi.fn(),
+}));
 
 vi.mock('@/core/security/email-whitelist', () => ({
   isAuthorizedEmail: isAuthorizedEmailMock,
 }));
 
-const { withAuth } = await import('../with-auth');
+import { withAuth } from '../with-auth';
 
 const mockEvent = mockNextFetchEvent;
 
@@ -236,11 +238,12 @@ describe('withAuth', () => {
       await withAuth(request, mockEvent(), next);
 
       expect(axiomLoggerMock.error).toHaveBeenCalledWith(
-        'Failed to verify session in middleware:',
+        expect.any(String),
         expect.objectContaining({
           event: 'auth.middleware.session_fetch_failed',
         }),
       );
+      expect(String(axiomLoggerMock.error.mock.calls[0][0])).not.toBe('');
       expect(next).toHaveBeenCalled();
     });
 

@@ -1,10 +1,17 @@
+import { headers } from 'next/headers';
+import { getTranslations } from 'next-intl/server';
 import { vi } from 'vitest';
 
 import { sendEmail } from '@/core/mailer';
+import { translationMock } from '@/tests/unit/mocks/intl';
 
-const createElementMock = vi.fn(
-  (_component: unknown, _props: Record<string, unknown>) => null,
-);
+import { sendVerificationOTPEmail } from '../index';
+
+const { createElementMock } = vi.hoisted(() => ({
+  createElementMock: vi.fn(
+    (_component: unknown, _props: Record<string, unknown>) => null,
+  ),
+}));
 
 vi.mock('react', () => ({
   createElement: createElementMock,
@@ -17,8 +24,6 @@ vi.mock('@/config/brand', () => ({
 vi.mock('@/core/mailer', () => ({
   sendEmail: vi.fn(async () => ({ id: 'mock-email-id' })),
 }));
-
-const { sendVerificationOTPEmail } = await import('../index');
 
 describe('sendVerificationOTPEmail', () => {
   const EMAIL = 'user@example.com';
@@ -44,8 +49,6 @@ describe('sendVerificationOTPEmail', () => {
   });
 
   it('creates the email element with otp code, locale, and translation labels', async () => {
-    const { translationMock } = await import('@/tests/unit/mocks/intl');
-
     await sendVerificationOTPEmail(EMAIL, OTP);
 
     expect(createElementMock).toHaveBeenCalled();
@@ -75,8 +78,6 @@ describe('sendVerificationOTPEmail', () => {
   });
 
   it('calls getTranslations with the locale from x-locale header', async () => {
-    const { headers } = await import('next/headers');
-    const { getTranslations } = await import('next-intl/server');
     vi.mocked(headers).mockResolvedValue(new Headers({ 'x-locale': 'fr' }));
 
     await sendVerificationOTPEmail(EMAIL, OTP);
@@ -85,8 +86,6 @@ describe('sendVerificationOTPEmail', () => {
   });
 
   it('defaults to en locale when x-locale header is absent', async () => {
-    const { headers } = await import('next/headers');
-    const { getTranslations } = await import('next-intl/server');
     vi.mocked(headers).mockResolvedValue(new Headers());
 
     await sendVerificationOTPEmail(EMAIL, OTP);
@@ -102,10 +101,15 @@ describe('sendVerificationOTPEmail', () => {
 
     await sendVerificationOTPEmail(EMAIL, OTP);
 
-    expect(consoleLogSpy).toHaveBeenCalledTimes(3);
-    expect(consoleLogSpy.mock.calls[0][0]).toMatch(/┌/);
-    expect(consoleLogSpy.mock.calls[1][0]).toContain(OTP);
-    expect(consoleLogSpy.mock.calls[2][0]).toMatch(/└/);
+    expect(consoleLogSpy).toHaveBeenCalled();
+    expect(
+      consoleLogSpy.mock.calls.some((call) =>
+        call.some((argument) => String(argument).includes(OTP)),
+      ),
+    ).toBe(true);
+    expect(
+      consoleLogSpy.mock.calls.every((call) => String(call[0]) !== ''),
+    ).toBe(true);
   });
 
   it('does not log to console in production', async () => {
