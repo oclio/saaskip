@@ -200,42 +200,35 @@ describe('useOtpVerification', () => {
       expect(toast.error).not.toHaveBeenCalled();
     });
 
-    it('treats missing error property as a non-INVALID_OTP error', async () => {
-      emailOtpSignInMock.mockImplementation((options) => {
-        options.fetchOptions.onError({});
-        return Promise.resolve();
-      });
+    it.each([
+      { error: {}, label: 'missing error property' },
+      {
+        error: { error: { code: 'OTHER' } },
+        label: 'non-INVALID_OTP error code',
+      },
+    ])(
+      'captures exception, shows error toast, and resets form on $label',
+      async ({ error }) => {
+        emailOtpSignInMock.mockImplementation((options) => {
+          options.fetchOptions.onError(error);
+          return Promise.resolve();
+        });
 
-      const { result } = renderHook(() => useOtpVerification());
+        const { result } = renderHook(() => useOtpVerification());
+        const resetSpy = result.current.otpForm.reset;
 
-      await act(async () => {
-        await result.current.handleSubmit({ code: '123456' });
-      });
+        await act(async () => {
+          await result.current.handleSubmit({ code: '123456' });
+        });
 
-      expect(Sentry.captureException).toHaveBeenCalled();
-      expect(toast.error).toHaveBeenCalled();
-    });
-
-    it('captures exception, shows error toast with description, and resets form on non-INVALID_OTP error', async () => {
-      emailOtpSignInMock.mockImplementation((options) => {
-        options.fetchOptions.onError({ error: { code: 'OTHER' } });
-        return Promise.resolve();
-      });
-
-      const { result } = renderHook(() => useOtpVerification());
-      const resetSpy = result.current.otpForm.reset;
-
-      await act(async () => {
-        await result.current.handleSubmit({ code: '123456' });
-      });
-
-      expect(Sentry.captureException).toHaveBeenCalled();
-      expect(toast.error).toHaveBeenCalledWith(
-        'errors.somethingWentWrong',
-        expect.objectContaining({ description: 'errors.unexpectedError' }),
-      );
-      expect(resetSpy).toHaveBeenCalled();
-    });
+        expect(Sentry.captureException).toHaveBeenCalled();
+        expect(toast.error).toHaveBeenCalledWith(
+          'errors.somethingWentWrong',
+          expect.objectContaining({ description: 'errors.unexpectedError' }),
+        );
+        expect(resetSpy).toHaveBeenCalled();
+      },
+    );
 
     it('resets pending and submitted to false after an error', async () => {
       emailOtpSignInMock.mockImplementation((options) => {

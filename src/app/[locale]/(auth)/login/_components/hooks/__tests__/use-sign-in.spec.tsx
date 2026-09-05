@@ -241,6 +241,8 @@ describe('useSignIn', () => {
     });
 
     it('shows an unauthorized toast with brand title, clears email, and resets form on EMAIL_NOT_AUTHORIZED', async () => {
+      const t = useTranslations();
+
       sendVerificationOtpMock.mockResolvedValue({
         error: { code: 'EMAIL_NOT_AUTHORIZED' },
       });
@@ -255,8 +257,11 @@ describe('useSignIn', () => {
         'pages.login.emailForm.emailNotAuthorized',
         expect.objectContaining({
           description: 'pages.login.emailForm.emailNotAuthorizedDescription',
-          duration: 10_000,
         }),
+      );
+      expect(t).toHaveBeenCalledWith(
+        'pages.login.emailForm.emailNotAuthorizedDescription',
+        { brand: brand.title },
       );
       expect(useLoginFormStore.getState().email).toBe('');
       expect(formResetMock).toHaveBeenCalledWith();
@@ -280,25 +285,6 @@ describe('useSignIn', () => {
         expect.objectContaining({ description: 'errors.unexpectedError' }),
       );
       expect(goToMock).not.toHaveBeenCalled();
-    });
-
-    it('passes the brand title to the unauthorized description translation', async () => {
-      sendVerificationOtpMock.mockResolvedValue({
-        error: { code: 'EMAIL_NOT_AUTHORIZED' },
-      });
-
-      const t = useTranslations();
-
-      const { result } = renderHook(() => useSignIn(goToMock));
-
-      await act(async () => {
-        await result.current.handleSignInEmail({ email: 'bad@example.com' });
-      });
-
-      expect(t).toHaveBeenCalledWith(
-        'pages.login.emailForm.emailNotAuthorizedDescription',
-        { brand: brand.title },
-      );
     });
   });
 

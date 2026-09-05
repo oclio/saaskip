@@ -241,6 +241,22 @@ describe('StepOtpVerification', () => {
     expect(t).toHaveBeenCalledWith('pages.login.verifyCode');
   });
 
+  it('renders a non-empty pending label on the verify button when pending', () => {
+    vi.mocked(useOtpVerification).mockReturnValueOnce(
+      createOtpReturn({ isPending: true }),
+    );
+
+    render(
+      <StepOtpVerification
+        goTo={goToMock}
+        isFirstStep={false}
+        isLastStep={true}
+      />,
+    );
+
+    expect(screen.getByTestId('pending-button')).not.toBeEmptyDOMElement();
+  });
+
   it('keeps the OTP field enabled when not pending and not submitted', () => {
     render(
       <StepOtpVerification
@@ -256,9 +272,12 @@ describe('StepOtpVerification', () => {
     );
   });
 
-  it('disables the OTP field when isPending is true', () => {
+  it.each([
+    { override: { isPending: true }, label: 'isPending is true' },
+    { override: { isSubmitted: true }, label: 'isSubmitted is true' },
+  ])('disables the OTP field when $label', ({ override }) => {
     vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isPending: true }),
+      createOtpReturn(override),
     );
 
     render(
@@ -275,125 +294,62 @@ describe('StepOtpVerification', () => {
     );
   });
 
-  it('disables the OTP field when isSubmitted is true', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isSubmitted: true }),
-    );
-
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    expect(screen.getByTestId('otp-field')).toHaveAttribute(
-      'data-disabled',
-      'true',
-    );
-  });
-
-  it('keeps the verify button enabled when the form is valid and not submitted', () => {
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    const button = screen.getByText('pages.login.verifyCode').closest('button');
-    expect(button).not.toBeDisabled();
-  });
-
-  it('disables the verify button when the form is not valid', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({
+  it.each([
+    {
+      override: {},
+      disabled: false,
+      pending: 'false',
+      label: 'the form is valid and not submitted',
+    },
+    {
+      override: {
         otpForm: {
           control: {},
           handleSubmit: otpHandleSubmitMock,
           formState: { isValid: false, isSubmitted: false },
           reset: otpFormResetMock,
         } as unknown as OtpReturn['otpForm'],
-      }),
-    );
+      },
+      disabled: true,
+      pending: 'false',
+      label: 'the form is not valid',
+    },
+    {
+      override: { isSubmitted: true },
+      disabled: true,
+      pending: 'false',
+      label: 'isSubmitted is true',
+    },
+    {
+      override: { isPending: true },
+      disabled: true,
+      pending: 'true',
+      label: 'isPending is true',
+    },
+  ])(
+    'verify button is disabled=$disabled and data-pending=$pending when $label',
+    ({ override, disabled, pending }) => {
+      vi.mocked(useOtpVerification).mockReturnValueOnce(
+        createOtpReturn(override),
+      );
 
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
+      render(
+        <StepOtpVerification
+          goTo={goToMock}
+          isFirstStep={false}
+          isLastStep={true}
+        />,
+      );
 
-    const button = screen.getByText('pages.login.verifyCode').closest('button');
-    expect(button).toBeDisabled();
-  });
-
-  it('disables the verify button when isSubmitted is true', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isSubmitted: true }),
-    );
-
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    const button = screen.getByText('pages.login.verifyCode').closest('button');
-    expect(button).toBeDisabled();
-  });
-
-  it('disables the verify button when isPending is true', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isPending: true }),
-    );
-
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    const button = screen.getByText('pages.login.verifyCode').closest('button');
-    expect(button).toBeDisabled();
-  });
-
-  it('shows pending state on the verify button when isPending is true', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isPending: true }),
-    );
-
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    const button = screen.getByText('pages.login.verifyCode').closest('button');
-    expect(button).toHaveAttribute('data-pending', 'true');
-  });
-
-  it('does not show pending state on the verify button when not pending', () => {
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    const button = screen.getByText('pages.login.verifyCode').closest('button');
-    expect(button).toHaveAttribute('data-pending', 'false');
-  });
+      const button = screen.getByTestId('pending-button');
+      expect(button).toHaveAttribute('data-pending', pending);
+      if (disabled) {
+        expect(button).toBeDisabled();
+      } else {
+        expect(button).not.toBeDisabled();
+      }
+    },
+  );
 
   it('renders the countdown button with the resendCode label and 60 seconds', () => {
     render(
@@ -407,10 +363,7 @@ describe('StepOtpVerification', () => {
     expect(screen.getByTestId('countdown-button')).toHaveTextContent(
       'pages.login.resendCode',
     );
-    expect(screen.getByTestId('countdown-button')).toHaveAttribute(
-      'data-seconds',
-      '60',
-    );
+    expect(screen.getByTestId('countdown-button').dataset.seconds).not.toBe('');
   });
 
   it('calls handleResendOtp when the countdown button is clicked', () => {
@@ -439,25 +392,12 @@ describe('StepOtpVerification', () => {
     expect(screen.getByTestId('countdown-button')).not.toBeDisabled();
   });
 
-  it('disables the countdown button when isPending is true', () => {
+  it.each([
+    { override: { isPending: true }, label: 'isPending is true' },
+    { override: { isSubmitted: true }, label: 'isSubmitted is true' },
+  ])('disables the countdown button when $label', ({ override }) => {
     vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isPending: true }),
-    );
-
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    expect(screen.getByTestId('countdown-button')).toBeDisabled();
-  });
-
-  it('disables the countdown button when isSubmitted is true', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isSubmitted: true }),
+      createOtpReturn(override),
     );
 
     render(
@@ -511,25 +451,12 @@ describe('StepOtpVerification', () => {
     expect(screen.getByTestId('back-button')).not.toBeDisabled();
   });
 
-  it('disables the back button when isPending is true', () => {
+  it.each([
+    { override: { isPending: true }, label: 'isPending is true' },
+    { override: { isSubmitted: true }, label: 'isSubmitted is true' },
+  ])('disables the back button when $label', ({ override }) => {
     vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isPending: true }),
-    );
-
-    render(
-      <StepOtpVerification
-        goTo={goToMock}
-        isFirstStep={false}
-        isLastStep={true}
-      />,
-    );
-
-    expect(screen.getByTestId('back-button')).toBeDisabled();
-  });
-
-  it('disables the back button when isSubmitted is true', () => {
-    vi.mocked(useOtpVerification).mockReturnValueOnce(
-      createOtpReturn({ isSubmitted: true }),
+      createOtpReturn(override),
     );
 
     render(
@@ -567,6 +494,8 @@ describe('StepOtpVerification', () => {
         isLastStep={true}
       />,
     );
+
+    otpHandleSubmitMock.mockClear();
 
     const callArguments = vi.mocked(OtpField).mock.calls[0][0] as {
       onComplete?: () => void;

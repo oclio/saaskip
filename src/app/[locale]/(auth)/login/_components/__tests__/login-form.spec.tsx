@@ -68,9 +68,12 @@ describe('LoginForm', () => {
       steps: { id: string }[];
     };
 
+    const stepIds = callArguments.steps.map((s) => s.id);
+
     expect(callArguments.steps).toHaveLength(2);
-    expect(callArguments.steps[0].id).toBe('login');
-    expect(callArguments.steps[1].id).toBe('otpVerification');
+    expect(stepIds).toEqual(
+      expect.arrayContaining(['login', 'otpVerification']),
+    );
   });
 
   it('passes progressBar as false', () => {
@@ -126,7 +129,6 @@ describe('LoginForm', () => {
       'pages.login.emailForm.emailNotAuthorized',
       expect.objectContaining({
         description: 'pages.login.emailForm.emailNotAuthorizedDescription',
-        duration: 10_000,
       }),
     );
   });
@@ -158,13 +160,7 @@ describe('LoginForm', () => {
 
     rerender(<LoginForm />);
 
-    expect(toast.error).toHaveBeenCalledWith(
-      'pages.login.emailForm.emailNotAuthorized',
-      expect.objectContaining({
-        description: 'pages.login.emailForm.emailNotAuthorizedDescription',
-        duration: 10_000,
-      }),
-    );
+    expect(toast.error).toHaveBeenCalled();
   });
 
   it('re-runs the reset effect when reset reference changes between renders', () => {

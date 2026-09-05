@@ -50,7 +50,9 @@ export default async function AuthLayout({ children }: Readonly<Props>) {
               key,
               renderLink(
                 { href: `/${key}`, ...legalLinkProps },
-                <span className="sr-only">{t('labels.opensInNewTab')}</span>,
+                <span className="sr-only" data-testid="sr-only-label">
+                  {t('labels.opensInNewTab')}
+                </span>,
               ),
             ]),
           ),

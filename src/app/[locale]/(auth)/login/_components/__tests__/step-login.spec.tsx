@@ -140,6 +140,11 @@ const getProviderButtons = () =>
     .getAllByTestId('pending-button')
     .filter((b) => b.getAttribute('type') !== 'submit');
 
+const getSubmitButton = () =>
+  screen
+    .getAllByTestId('pending-button')
+    .find((b) => b.getAttribute('type') === 'submit') as HTMLButtonElement;
+
 describe('StepLogin', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -205,38 +210,27 @@ describe('StepLogin', () => {
     ).toBeInTheDocument();
   });
 
-  it('calls handleSignInProvider with the provider name when a provider button is clicked', () => {
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
+  it.each([
+    { index: 0, provider: 'google' },
+    { index: 1, provider: 'github' },
+  ])(
+    'calls handleSignInProvider with $provider when the $provider button is clicked',
+    ({ index, provider }) => {
+      render(
+        <StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />,
+      );
 
-    fireEvent.click(getProviderButtons()[0]);
+      fireEvent.click(getProviderButtons()[index]);
 
-    expect(handleSignInProviderMock).toHaveBeenCalledWith('google');
-  });
+      expect(handleSignInProviderMock).toHaveBeenCalledWith(provider);
+    },
+  );
 
-  it('calls handleSignInProvider with github when the github button is clicked', () => {
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
-
-    fireEvent.click(getProviderButtons()[1]);
-
-    expect(handleSignInProviderMock).toHaveBeenCalledWith('github');
-  });
-
-  it('disables all provider buttons when isSubmitted is true', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({ isSubmitted: true }),
-    );
-
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
-
-    for (const button of getProviderButtons()) {
-      expect(button).toBeDisabled();
-    }
-  });
-
-  it('disables all provider buttons when isPending is true', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({ isPending: true }),
-    );
+  it.each([
+    { override: { isSubmitted: true }, label: 'isSubmitted is true' },
+    { override: { isPending: true }, label: 'isPending is true' },
+  ])('disables all provider buttons when $label', ({ override }) => {
+    vi.mocked(useSignIn).mockReturnValueOnce(createSignInReturn(override));
 
     render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
 
@@ -257,37 +251,28 @@ describe('StepLogin', () => {
     expect(buttons[1]).toHaveAttribute('data-pending', 'false');
   });
 
-  it('disables the submit button when the form is not valid', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({
+  it.each([
+    {
+      override: {
         form: {
           control: {},
           handleSubmit: handleSubmitMock,
           formState: { isValid: false, isSubmitted: false },
           reset: formResetMock,
         } as unknown as SignInReturn['form'],
-      }),
-    );
+      },
+      label: 'the form is not valid',
+    },
+    {
+      override: { isSubmitted: true },
+      label: 'isSubmitted is true',
+    },
+  ])('disables the submit button when $label', ({ override }) => {
+    vi.mocked(useSignIn).mockReturnValueOnce(createSignInReturn(override));
 
     render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
 
-    const submitButton = screen
-      .getByText('pages.login.emailForm.receiveACode')
-      .closest('button');
-    expect(submitButton).toBeDisabled();
-  });
-
-  it('disables the submit button when isSubmitted is true', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({ isSubmitted: true }),
-    );
-
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
-
-    const submitButton = screen
-      .getByText('pages.login.emailForm.receiveACode')
-      .closest('button');
-    expect(submitButton).toBeDisabled();
+    expect(getSubmitButton()).toBeDisabled();
   });
 
   it('passes the goTo function to useSignIn', () => {
@@ -335,20 +320,11 @@ describe('StepLogin', () => {
     expect(screen.getByTestId('email-input')).not.toBeDisabled();
   });
 
-  it('disables the email input when isPending is true', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({ isPending: true }),
-    );
-
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
-
-    expect(screen.getByTestId('email-input')).toBeDisabled();
-  });
-
-  it('disables the email input when isSubmitted is true', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({ isSubmitted: true }),
-    );
+  it.each([
+    { override: { isPending: true }, label: 'isPending is true' },
+    { override: { isSubmitted: true }, label: 'isSubmitted is true' },
+  ])('disables the email input when $label', ({ override }) => {
+    vi.mocked(useSignIn).mockReturnValueOnce(createSignInReturn(override));
 
     render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
 
@@ -394,47 +370,49 @@ describe('StepLogin', () => {
     expect(screen.getByTestId('field-error')).toBeInTheDocument();
   });
 
-  it('shows pending state on the submit button when isPending and no provider is selected', () => {
+  it.each([
+    {
+      override: { isPending: true, selectedProvider: undefined },
+      expected: 'true',
+      label: 'isPending and no provider is selected',
+    },
+    {
+      override: { isPending: true, selectedProvider: 'google' as const },
+      expected: 'false',
+      label: 'a provider is selected',
+    },
+    {
+      override: { isPending: false, selectedProvider: undefined },
+      expected: 'false',
+      label: 'not pending',
+    },
+  ])(
+    'shows data-pending=$expected on the submit button when $label',
+    ({ override, expected }) => {
+      vi.mocked(useSignIn).mockReturnValueOnce(createSignInReturn(override));
+
+      render(
+        <StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />,
+      );
+
+      expect(getSubmitButton()).toHaveAttribute('data-pending', expected);
+    },
+  );
+
+  it('renders a non-empty pending label on the submit button when pending', () => {
     vi.mocked(useSignIn).mockReturnValueOnce(
       createSignInReturn({ isPending: true, selectedProvider: undefined }),
     );
 
     render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
 
-    const submitButton = screen
-      .getByText('pages.login.emailForm.receiveACode')
-      .closest('button');
-    expect(submitButton).toHaveAttribute('data-pending', 'true');
-  });
-
-  it('does not show pending state on the submit button when a provider is selected', () => {
-    vi.mocked(useSignIn).mockReturnValueOnce(
-      createSignInReturn({ isPending: true, selectedProvider: 'google' }),
-    );
-
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
-
-    const submitButton = screen
-      .getByText('pages.login.emailForm.receiveACode')
-      .closest('button');
-    expect(submitButton).toHaveAttribute('data-pending', 'false');
-  });
-
-  it('does not show pending state on the submit button when not pending', () => {
-    render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
-
-    const submitButton = screen
-      .getByText('pages.login.emailForm.receiveACode')
-      .closest('button');
-    expect(submitButton).toHaveAttribute('data-pending', 'false');
+    expect(getSubmitButton()).not.toBeEmptyDOMElement();
   });
 
   it('keeps the submit button enabled when the form is valid and not submitted', () => {
     render(<StepLogin goTo={goToMock} isFirstStep={true} isLastStep={false} />);
 
-    const submitButton = screen
-      .getByText('pages.login.emailForm.receiveACode')
-      .closest('button');
+    const submitButton = getSubmitButton();
     expect(submitButton).not.toBeDisabled();
   });
 
